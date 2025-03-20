@@ -10,32 +10,43 @@
             font-family: Arial, sans-serif; 
             text-align: center; 
             display: flex;
-            justify-content: space-between; /* Align the board and scoreboard side by side */
+            justify-content: center; /* Center the title horizontally */
+            align-items: flex-start; /* Align content to the top */
+            min-height: 100vh; /* Make sure the content fills the entire screen */
         }
-        .game-container { flex: 3; }
+
+        .game-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px; /* Adjust the margin to ensure space for the scoreboard */
+        }
+
         .scoreboard { 
             width: 250px; 
             padding: 20px; 
-            margin-left: 20px; 
             border: 2px solid black; 
-            height: 100%; 
             background-color: white;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Adjust the content of the scoreboard */
+            justify-content: flex-start; /* Keep the content at the top */
+            align-items: flex-start; /* Align the content to the left */
         }
+
         .board-container { 
             display: flex; 
             justify-content: center; 
             margin-bottom: 20px; 
         }
+
         .board { 
             display: grid; 
             grid-template-columns: repeat(5, 1fr); 
             gap: 10px; 
             max-width: 800px; 
-            margin: auto; 
         }
+
         .cell { 
             background: #52b788; 
             color: white; 
@@ -43,12 +54,14 @@
             cursor: pointer; 
             font-size: 20px; 
         }
+
         .category { 
             font-weight: bold; 
             padding: 10px; 
             background: #40916c; 
             color: white; 
         }
+
         .modal { 
             display: none; 
             position: fixed; 
@@ -61,16 +74,22 @@
             max-width: 600px; 
             width: 100%;
         }
+
         .modal p { 
             font-size: 24px; 
             text-align: center; 
         }
+
         .clicked { 
             background-color: #1b4332; 
         }
+
         .team-section { margin-top: 20px; }
+
         .team-item { margin-bottom: 10px; }
+
         .score-controls { margin-left: 10px; }
+
         .score-input {
             width: 50px;
             text-align: center;
