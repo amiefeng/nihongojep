@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日本語ユニット６の漢字</title>
+    <title>Jeopardy Game</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
+        .board-container { display: flex; justify-content: center; margin-bottom: 20px; }
         .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 800px; margin: auto; }
         .cell { background: blue; color: white; padding: 20px; cursor: pointer; font-size: 20px; }
+        .category { font-weight: bold; padding: 10px; background: darkblue; color: white; }
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 2px solid black; }
         .modal img { max-width: 100%; height: auto; }
     </style>
@@ -15,7 +17,10 @@
 <body>
     <h1>Jeopardy Game</h1>
     <h2>Score: <span id="score">0</span></h2>
-    <div class="board" id="board"></div>
+    
+    <div class="board-container">
+        <div class="board" id="board"></div>
+    </div>
     
     <div class="modal" id="modal">
         <p id="question"></p>
@@ -26,7 +31,7 @@
     </div>
 
     <script>
-        const categories = ["History", "Science", "Geography", "Sports", "Movies"];
+        const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
         const questions = [];
 
         for (let row = 1; row <= 5; row++) {
@@ -50,6 +55,13 @@
         let currentQuestion = null;
 
         function loadBoard() {
+            categories.forEach(category => {
+                let categoryCell = document.createElement("div");
+                categoryCell.classList.add("category");
+                categoryCell.innerText = category;
+                board.appendChild(categoryCell);
+            });
+
             questions.forEach((q, index) => {
                 let cell = document.createElement("div");
                 cell.classList.add("cell");
