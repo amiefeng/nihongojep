@@ -66,6 +66,11 @@
         }
         .team-section { margin-top: 20px; }
         .team-item { margin-bottom: 10px; }
+        .score-controls { margin-left: 10px; }
+        .score-input {
+            width: 50px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -163,24 +168,28 @@
             teams.forEach((team, index) => {
                 let teamDiv = document.createElement("div");
                 teamDiv.classList.add("team-item");
-                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>`;
+                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>
+                                      <div class="score-controls">
+                                          <button onclick="adjustScore(${index}, 100)">+100</button>
+                                          <button onclick="adjustScore(${index}, -100)">-100</button>
+                                          <input type="number" class="score-input" value="${team.score}" onchange="updateManualScore(${index}, this.value)" />
+                                      </div>`;
                 teamList.appendChild(teamDiv);
             });
-            updateTeamScores();
         }
 
-        function updateTeamScores() {
-            teamScores.innerHTML = "";
-            teams.forEach((team, index) => {
-                let scoreDiv = document.createElement("div");
-                scoreDiv.innerHTML = `<button onclick="addScore(${index}, 100)">Add 100 to ${team.name}</button>`;
-                teamScores.appendChild(scoreDiv);
-            });
-        }
-
-        function addScore(teamIndex, points) {
+        function adjustScore(teamIndex, points) {
             teams[teamIndex].score += points;
             document.getElementById(`scoreTeam${teamIndex}`).innerText = teams[teamIndex].score;
+            displayTeams(); // Update the displayed score
+        }
+
+        function updateManualScore(teamIndex, value) {
+            let newScore = parseInt(value, 10);
+            if (!isNaN(newScore)) {
+                teams[teamIndex].score = newScore;
+                document.getElementById(`scoreTeam${teamIndex}`).innerText = newScore;
+            }
         }
 
         loadBoard();
