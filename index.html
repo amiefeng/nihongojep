@@ -6,12 +6,13 @@
     <title>日本語ユニット６の漢字</title>
     <style>
         body { 
-            background: linear-gradient(109.6deg, rgb(17, 151, 147) 11.2%, rgb(154, 214, 212) 55.4%, rgb(255, 233, 171) 100.2%);
+            background: linear-gradient(to top, #c1dfc4 0%, #deecdd 100%);
             font-family: Arial, sans-serif; 
             text-align: center; 
             display: flex;
+            justify-content: space-between; /* Align the board and scoreboard side by side */
         }
-        .game-container { flex: 1; }
+        .game-container { flex: 3; }
         .scoreboard { 
             width: 250px; 
             padding: 20px; 
@@ -19,6 +20,9 @@
             border: 2px solid black; 
             height: 100%; 
             background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Adjust the content of the scoreboard */
         }
         .board-container { 
             display: flex; 
@@ -94,8 +98,6 @@
         <h4>Add New Team</h4>
         <input type="text" id="teamNameInput" placeholder="Enter team name">
         <button onclick="addTeam()">Add Team</button>
-        <h4>Team Scores</h4>
-        <div id="teamScores"></div>
     </div>
 
     <script>
@@ -119,7 +121,6 @@
         const modal = document.getElementById("modal");
         const questionText = document.getElementById("question");
         const teamList = document.getElementById("teamList");
-        const teamScores = document.getElementById("teamScores");
         let currentQuestion = null;
         const teams = [];
 
