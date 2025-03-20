@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeopardy Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 600px; margin: auto; }
+        .cell { background: blue; color: white; padding: 20px; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 2px solid black; }
+        .modal img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <h1>Jeopardy Game</h1>
+    <h2>Score: <span id="score">0</span></h2>
+    <div class="board" id="board"></div>
+    
+    <div class="modal" id="modal">
+        <p id="question"></p>
+        <img id="questionImage" src="" style="display: none;">
+        <input type="text" id="answer" placeholder="Your Answer">
+        <button onclick="checkAnswer()">Submit</button>
+        <button onclick="closeModal()">Close</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "What is the capital of France?", answer: "Paris", points: 100, image: "" },
+            { question: "Which animal is known as the King of the Jungle?", answer: "Lion", points: 200, image: "https://example.com/lion.jpg" },
+            { question: "What planet is known as the Red Planet?", answer: "Mars", points: 300, image: "" }
+        ];
+
+        let score = 0;
+        const board = document.getElementById("board");
+        const modal = document.getElementById("modal");
+        const questionText = document.getElementById("question");
+        const questionImage = document.getElementById("questionImage");
+        const answerInput = document.getElementById("answer");
+        let currentQuestion = null;
+
+        function loadBoard() {
+            questions.forEach((q, index) => {
+                let cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.innerText = `$${q.points}`;
+                cell.onclick = () => openQuestion(index);
+                board.appendChild(cell);
+            });
+        }
+
+        function openQuestion(index) {
+            currentQuestion = questions[index];
+            questionText.innerText = currentQuestion.question;
+            if (currentQuestion.image) {
+                questionImage.src = currentQuestion.image;
+                questionImage.style.display = "block";
+            } else {
+                questionImage.style.display = "none";
+            }
+            modal.style.display = "block";
+        }
+
+        function checkAnswer() {
+            if (answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase()) {
+                score += currentQuestion.points;
+                document.getElementById("score").innerText = score;
+                alert("Correct!");
+            } else {
+                alert("Wrong answer!");
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            answerInput.value = "";
+        }
+
+        loadBoard();
+    </script>
+</body>
+</html>
