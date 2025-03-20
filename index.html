@@ -5,11 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日本語ユニット６の漢字</title>
     <style>
-        body { background: linear-gradient(109.6deg, rgb(17, 151, 147) 11.2%, rgb(154, 214, 212) 55.4%, rgb(255, 233, 171) 100.2%);font-family: Arial, sans-serif; text-align: center; }
-        .board-container { display: flex; justify-content: center; margin-bottom: 20px; }
-        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 800px; margin: auto; }
-        .cell { background: blue; color: white; padding: 20px; cursor: pointer; font-size: 20px; }
-        .category { font-weight: bold; padding: 10px; background: darkblue; color: white; }
+        body { 
+            background: linear-gradient(109.6deg, rgb(17, 151, 147) 11.2%, rgb(154, 214, 212) 55.4%, rgb(255, 233, 171) 100.2%);
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            display: flex;
+        }
+        .game-container { flex: 1; }
+        .scoreboard { 
+            width: 250px; 
+            padding: 20px; 
+            margin-left: 20px; 
+            border: 2px solid black; 
+            height: 100%; 
+            background-color: white;
+        }
+        .board-container { 
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+        }
+        .board { 
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 10px; 
+            max-width: 800px; 
+            margin: auto; 
+        }
+        .cell { 
+            background: blue; 
+            color: white; 
+            padding: 20px; 
+            cursor: pointer; 
+            font-size: 20px; 
+        }
+        .category { 
+            font-weight: bold; 
+            padding: 10px; 
+            background: darkblue; 
+            color: white; 
+        }
         .modal { 
             display: none; 
             position: fixed; 
@@ -22,27 +57,47 @@
             max-width: 600px; 
             width: 100%;
         }
-        .modal p { font-size: 24px; text-align: center; }
-        .clicked { background-color: rgb(103, 103, 103); } 
+        .modal p { 
+            font-size: 24px; 
+            text-align: center; 
+        }
+        .clicked { 
+            background-color: rgb(103, 103, 103); 
+        }
+        .team-section { margin-top: 20px; }
+        .team-item { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>日本語ユニット６の漢字</h1>
-    <h2>Score: <span id="score">0</span></h2>
-    
-    <div class="board-container">
-        <div class="board" id="board"></div>
+    <div class="game-container">
+        <h1>日本語ユニット６の漢字</h1>
+        <h2>Score: <span id="score">0</span></h2>
+
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
+
+        <div class="modal" id="modal">
+            <p id="question"></p>
+            <button onclick="closeModal()">Close</button>
+        </div>
     </div>
-    
-    <div class="modal" id="modal">
-        <p id="question"></p>
-        <button onclick="closeModal()">Close</button>
+
+    <div class="scoreboard">
+        <h3>Teams</h3>
+        <div id="teamList"></div>
+        <h4>Add New Team</h4>
+        <input type="text" id="teamNameInput" placeholder="Enter team name">
+        <button onclick="addTeam()">Add Team</button>
+        <h4>Team Scores</h4>
+        <div id="teamScores"></div>
     </div>
 
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
         const questions = [];
 
+        // Generate questions for the board
         for (let row = 1; row <= 5; row++) {
             categories.forEach((category, colIndex) => {
                 questions.push({
@@ -55,11 +110,13 @@
             });
         }
 
-        let score = 0;
         const board = document.getElementById("board");
         const modal = document.getElementById("modal");
         const questionText = document.getElementById("question");
+        const teamList = document.getElementById("teamList");
+        const teamScores = document.getElementById("teamScores");
         let currentQuestion = null;
+        const teams = [];
 
         function loadBoard() {
             categories.forEach(category => {
@@ -91,6 +148,42 @@
             clickedCells.forEach(cell => {
                 cell.classList.remove("clicked"); 
             });
+        }
+
+        // Team management functions
+        function addTeam() {
+            const teamName = document.getElementById("teamNameInput").value;
+            if (teamName) {
+                const newTeam = { name: teamName, score: 0 };
+                teams.push(newTeam);
+                displayTeams();
+                document.getElementById("teamNameInput").value = ""; // Clear input field
+            }
+        }
+
+        function displayTeams() {
+            teamList.innerHTML = ""; // Clear the team list before redisplaying
+            teams.forEach((team, index) => {
+                let teamDiv = document.createElement("div");
+                teamDiv.classList.add("team-item");
+                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>`;
+                teamList.appendChild(teamDiv);
+            });
+            updateTeamScores();
+        }
+
+        function updateTeamScores() {
+            teamScores.innerHTML = "";
+            teams.forEach((team, index) => {
+                let scoreDiv = document.createElement("div");
+                scoreDiv.innerHTML = `<button onclick="addScore(${index}, 100)">Add 100 to ${team.name}</button>`;
+                teamScores.appendChild(scoreDiv);
+            });
+        }
+
+        function addScore(teamIndex, points) {
+            teams[teamIndex].score += points;
+            document.getElementById(`scoreTeam${teamIndex}`).innerText = teams[teamIndex].score;
         }
 
         loadBoard();
