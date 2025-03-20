@@ -23,6 +23,7 @@
             width: 100%;
         }
         .modal p { font-size: 24px; text-align: center; }
+        .clicked { background-color: rgb(103, 103, 103); } 
     </style>
 </head>
 <body>
@@ -72,19 +73,24 @@
                 let cell = document.createElement("div");
                 cell.classList.add("cell");
                 cell.innerText = `$${q.points}`;
-                cell.onclick = () => openQuestion(index);
+                cell.onclick = () => openQuestion(index, cell); 
                 board.appendChild(cell);
             });
         }
 
-        function openQuestion(index) {
+        function openQuestion(index, cell) {
             currentQuestion = questions[index];
             questionText.innerText = currentQuestion.question;
             modal.style.display = "block";
+            cell.classList.add("clicked"); 
         }
 
         function closeModal() {
             modal.style.display = "none";
+            const clickedCells = document.querySelectorAll(".clicked");
+            clickedCells.forEach(cell => {
+                cell.classList.remove("clicked"); 
+            });
         }
 
         loadBoard();
