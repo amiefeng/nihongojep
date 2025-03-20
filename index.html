@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeopardy Game</title>
+    <title>日本語ユニット６の漢字</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: auto; }
-        .cell { background: blue; color: white; padding: 20px; cursor: pointer; }
+        .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 800px; margin: auto; }
+        .cell { background: blue; color: white; padding: 20px; cursor: pointer; font-size: 20px; }
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 2px solid black; }
         .modal img { max-width: 100%; height: auto; }
     </style>
@@ -26,11 +26,20 @@
     </div>
 
     <script>
-        const questions = [
-            { question: "What is the capital of France?", answer: "Paris", points: 100, image: "" },
-            { question: "Which animal is known as the King of the Jungle?", answer: "Lion", points: 200, image: "https://example.com/lion.jpg" },
-            { question: "What planet is known as the Red Planet?", answer: "Mars", points: 300, image: "" }
-        ];
+        const categories = ["History", "Science", "Geography", "Sports", "Movies"];
+        const questions = [];
+
+        for (let row = 1; row <= 5; row++) {
+            categories.forEach((category, colIndex) => {
+                questions.push({
+                    category: category,
+                    question: `Question for ${category} - $${row * 100}`,
+                    answer: "Answer", 
+                    points: row * 100, 
+                    image: ""
+                });
+            });
+        }
 
         let score = 0;
         const board = document.getElementById("board");
