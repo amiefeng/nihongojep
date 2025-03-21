@@ -30,17 +30,30 @@
 
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
-        const questions = [];
+        const questions = [
+            "","","","","",
+            "","","","","",
+            "","","","","",
+            "","","","","",
+            "","","","","",
+        ];
 
         // Generate questions for the board
         for (let row = 1; row <= 5; row++) {
             categories.forEach((category, colIndex) => {
+                let image = "";
+                
+                // Add image path only for BONUS category
+                if (category === "BONUS") {
+                    image = `bonus_image_${row}.jpg`; // Replace with your actual image paths
+                }
+                
                 questions.push({
                     category: category,
                     question: `Question for ${category} - $${row * 100}`,
                     answer: "Answer", 
-                    points: row * 100, 
-                    image: ""
+                    points: row * 100,
+                    image: image
                 });
             });
         }
@@ -71,9 +84,36 @@
 
         function openQuestion(index, cell) {
             currentQuestion = questions[index];
+            
+            // Clear previous content
             questionText.innerText = currentQuestion.question;
+            
+            // If there's an image, add it to the modal
+            if (currentQuestion.image) {
+                // Check if an image element already exists
+                let imageElement = document.getElementById("questionImage");
+                if (!imageElement) {
+                    // Create new image element if it doesn't exist
+                    imageElement = document.createElement("img");
+                    imageElement.id = "questionImage";
+                    imageElement.style.maxWidth = "100%";
+                    imageElement.style.marginTop = "20px";
+                    modal.insertBefore(imageElement, document.querySelector("#modal button"));
+                }
+                
+                // Set the image source
+                imageElement.src = currentQuestion.image;
+                imageElement.style.display = "block";
+            } else {
+                // Hide image element if it exists
+                const existingImage = document.getElementById("questionImage");
+                if (existingImage) {
+                    existingImage.style.display = "none";
+                }
+            }
+            
             modal.style.display = "block";
-            cell.classList.add("clicked"); // This keeps the color after the question is opened
+            cell.classList.add("clicked");
         }
 
         function closeModal() {
