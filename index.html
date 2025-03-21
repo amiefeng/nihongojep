@@ -16,6 +16,7 @@
 
         <div class="modal" id="modal">
             <p id="question"></p>
+            <div id="imageContainer"></div>
             <button onclick="closeModal()">Close</button>
         </div>
     </div>
@@ -30,30 +31,17 @@
 
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
-        const questions = [
-            "","","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
-        ];
+        const questions = [];
 
         // Generate questions for the board
         for (let row = 1; row <= 5; row++) {
             categories.forEach((category, colIndex) => {
-                let image = "";
-                
-                // Add image path only for BONUS category
-                if (category === "BONUS") {
-                    image = `bonus_image_${row}.jpg`; // Replace with your actual image paths
-                }
-                
                 questions.push({
                     category: category,
                     question: `Question for ${category} - $${row * 100}`,
                     answer: "Answer", 
                     points: row * 100,
-                    image: image
+                    row: row  // Store the row number
                 });
             });
         }
@@ -61,11 +49,13 @@
         const board = document.getElementById("board");
         const modal = document.getElementById("modal");
         const questionText = document.getElementById("question");
+        const imageContainer = document.getElementById("imageContainer");
         const teamList = document.getElementById("teamList");
         let currentQuestion = null;
         const teams = [];
 
         function loadBoard() {
+            // First add all category headers
             categories.forEach(category => {
                 let categoryCell = document.createElement("div");
                 categoryCell.classList.add("category");
@@ -73,6 +63,7 @@
                 board.appendChild(categoryCell);
             });
 
+            // Then add all cells for questions
             questions.forEach((q, index) => {
                 let cell = document.createElement("div");
                 cell.classList.add("cell");
@@ -87,29 +78,20 @@
             
             // Clear previous content
             questionText.innerText = currentQuestion.question;
+            imageContainer.innerHTML = ""; // Clear any previous images
             
-            // If there's an image, add it to the modal
-            if (currentQuestion.image) {
-                // Check if an image element already exists
-                let imageElement = document.getElementById("questionImage");
-                if (!imageElement) {
-                    // Create new image element if it doesn't exist
-                    imageElement = document.createElement("img");
-                    imageElement.id = "questionImage";
-                    imageElement.style.maxWidth = "100%";
-                    imageElement.style.marginTop = "20px";
-                    modal.insertBefore(imageElement, document.querySelector("#modal button"));
-                }
+            // Only add images for BONUS category
+            if (currentQuestion.category === "BONUS") {
+                const img = document.createElement("img");
+                img.id = "questionImage";
+                img.src = `bonus_image_${currentQuestion.row}.jpg`;
+                img.alt = "Bonus Image";
+                imageContainer.appendChild(img);
                 
-                // Set the image source
-                imageElement.src = currentQuestion.image;
-                imageElement.style.display = "block";
-            } else {
-                // Hide image element if it exists
-                const existingImage = document.getElementById("questionImage");
-                if (existingImage) {
-                    existingImage.style.display = "none";
-                }
+                // Add error handler to hide broken images
+                img.onerror = function() {
+                    this.style.display = "none";
+                };
             }
             
             modal.style.display = "block";
