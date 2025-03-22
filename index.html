@@ -16,7 +16,6 @@
 
         <div class="modal" id="modal">
             <p id="question"></p>
-            <button onclick="closeModal()">Close</button>
         </div>
     </div>
 
@@ -30,23 +29,56 @@
 
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
-        const questions = [
-            "","","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
-        ];
 
-        // Generate questions for the board
-        for (let row = 1; row <= 5; row++) {
-            categories.forEach((category, colIndex) => {
+        // Dictionary with proper questions and answers
+        const questionsData = {
+            "意味": [
+                { question: "What is the meaning of 漢字?", answer: "Kanji" },
+                { question: "What is the meaning of 日本?", answer: "Japan" },
+                { question: "What is the meaning of 勉強?", answer: "Study" },
+                { question: "What is the meaning of 学校?", answer: "School" },
+                { question: "What is the meaning of 先生?", answer: "Teacher" }
+            ],
+            "読み方": [
+                { question: "How do you read 漢字?", answer: "かんじ (Kanji)" },
+                { question: "How do you read 日本?", answer: "にほん (Nihon)" },
+                { question: "How do you read 勉強?", answer: "べんきょう (Benkyou)" },
+                { question: "How do you read 学校?", answer: "がっこう (Gakkou)" },
+                { question: "How do you read 先生?", answer: "せんせい (Sensei)" }
+            ],
+            "書く": [
+                { question: "Write the kanji for 'Kanji'.", answer: "漢字" },
+                { question: "Write the kanji for 'Japan'.", answer: "日本" },
+                { question: "Write the kanji for 'Study'.", answer: "勉強" },
+                { question: "Write the kanji for 'School'.", answer: "学校" },
+                { question: "Write the kanji for 'Teacher'.", answer: "先生" }
+            ],
+            "例えば": [
+                { question: "Give an example of a word using 漢字.", answer: "中国語 (Chinese Language)" },
+                { question: "Give an example of a word using 日本.", answer: "日本人 (Japanese Person)" },
+                { question: "Give an example of a word using 勉強.", answer: "勉強時間 (Study Time)" },
+                { question: "Give an example of a word using 学校.", answer: "小学校 (Elementary School)" },
+                { question: "Give an example of a word using 先生.", answer: "英語の先生 (English Teacher)" }
+            ],
+            "BONUS": [
+                { question: "What is the Japanese word for 'Language'?", answer: "言語 (Gengo)" },
+                { question: "What is the Japanese word for 'University'?", answer: "大学 (Daigaku)" },
+                { question: "What is the Japanese word for 'Library'?", answer: "図書館 (Toshokan)" },
+                { question: "What is the Japanese word for 'Homework'?", answer: "宿題 (Shukudai)" },
+                { question: "What is the Japanese word for 'Friend'?", answer: "友達 (Tomodachi)" }
+            ]
+        };
+
+        // Generate questions array for the board
+        const questions = [];
+
+        for (let row = 0; row < 5; row++) {
+            categories.forEach((category) => {
                 questions.push({
                     category: category,
-                    question: `Question for ${category} - $${row * 100}`,
-                    answer: "Answer", 
-                    points: row * 100, 
-                    image: ""
+                    question: questionsData[category][row].question,
+                    answer: questionsData[category][row].answer,
+                    points: (row + 1) * 100
                 });
             });
         }
@@ -54,9 +86,25 @@
         const board = document.getElementById("board");
         const modal = document.getElementById("modal");
         const questionText = document.getElementById("question");
-        const teamList = document.getElementById("teamList");
-        let currentQuestion = null;
-        const teams = [];
+        const answerText = document.createElement("p");
+        answerText.style.display = "none"; // Hide answer initially
+        modal.appendChild(answerText);
+
+        const revealButton = document.createElement("button");
+        revealButton.innerText = "Reveal Answer";
+        revealButton.onclick = () => {
+            answerText.style.display = "block";
+        };
+
+        const closeButton = document.createElement("button");
+        closeButton.innerText = "Close";
+        closeButton.onclick = () => {
+            modal.style.display = "none";
+            answerText.style.display = "none"; // Hide answer for next question
+        };
+
+        modal.appendChild(revealButton);
+        modal.appendChild(closeButton);
 
         function loadBoard() {
             categories.forEach(category => {
@@ -70,60 +118,18 @@
                 let cell = document.createElement("div");
                 cell.classList.add("cell");
                 cell.innerText = `$${q.points}`;
-                cell.onclick = () => openQuestion(index, cell); 
+                cell.onclick = () => openQuestion(index, cell);
                 board.appendChild(cell);
             });
         }
 
         function openQuestion(index, cell) {
-            currentQuestion = questions[index];
+            const currentQuestion = questions[index];
             questionText.innerText = currentQuestion.question;
+            answerText.innerText = `Answer: ${currentQuestion.answer}`;
+            answerText.style.display = "none"; // Hide answer initially
             modal.style.display = "block";
-            cell.classList.add("clicked"); // This keeps the color after the question is opened
-        }
-
-        function closeModal() {
-            modal.style.display = "none";
-        }
-
-        // Team management functions
-        function addTeam() {
-            const teamName = document.getElementById("teamNameInput").value;
-            if (teamName) {
-                const newTeam = { name: teamName, score: 0 };
-                teams.push(newTeam);
-                displayTeams();
-                document.getElementById("teamNameInput").value = ""; // Clear input field
-            }
-        }
-
-        function displayTeams() {
-            teamList.innerHTML = ""; // Clear the team list before redisplaying
-            teams.forEach((team, index) => {
-                let teamDiv = document.createElement("div");
-                teamDiv.classList.add("team-item");
-                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>
-                                      <div class="score-controls">
-                                          <button onclick="adjustScore(${index}, 100)">+100</button>
-                                          <button onclick="adjustScore(${index}, -100)">-100</button>
-                                          <input type="number" class="score-input" value="${team.score}" onchange="updateManualScore(${index}, this.value)" />
-                                      </div>`;
-                teamList.appendChild(teamDiv);
-            });
-        }
-
-        function adjustScore(teamIndex, points) {
-            teams[teamIndex].score += points;
-            document.getElementById(`scoreTeam${teamIndex}`).innerText = teams[teamIndex].score;
-            displayTeams(); // Update the displayed score
-        }
-
-        function updateManualScore(teamIndex, value) {
-            let newScore = parseInt(value, 10);
-            if (!isNaN(newScore)) {
-                teams[teamIndex].score = newScore;
-                document.getElementById(`scoreTeam${teamIndex}`).innerText = newScore;
-            }
+            cell.classList.add("clicked");
         }
 
         loadBoard();
