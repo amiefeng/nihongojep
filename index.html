@@ -30,7 +30,7 @@
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
 
-        // Dictionary with proper questions and answers
+// Dictionary with proper questions and answers
         const questionsData = {
             "意味": [
                 { question: "What is the meaning of 漢字?", answer: "Kanji" },
@@ -69,7 +69,7 @@
             ]
         };
 
-        // Generate questions array for the board
+    // Generate questions array for the board
         const questions = [];
 
         for (let row = 0; row < 5; row++) {
@@ -130,6 +130,47 @@
             answerText.style.display = "none"; // Hide answer initially
             modal.style.display = "block";
             cell.classList.add("clicked");
+        }
+        const teams = [];
+
+        // Team management functions
+        function addTeam() {
+            const teamName = document.getElementById("teamNameInput").value;
+            if (teamName) {
+                const newTeam = { name: teamName, score: 0 };
+                teams.push(newTeam);
+                displayTeams();
+                document.getElementById("teamNameInput").value = ""; // Clear input field
+            }
+        }
+
+        function displayTeams() {
+            teamList.innerHTML = ""; // Clear the team list before redisplaying
+            teams.forEach((team, index) => {
+                let teamDiv = document.createElement("div");
+                teamDiv.classList.add("team-item");
+                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>
+                                      <div class="score-controls">
+                                          <button onclick="adjustScore(${index}, 100)">+100</button>
+                                          <button onclick="adjustScore(${index}, -100)">-100</button>
+                                          <input type="number" class="score-input" value="${team.score}" onchange="updateManualScore(${index}, this.value)" />
+                                      </div>`;
+                teamList.appendChild(teamDiv);
+            });
+        }
+
+        function adjustScore(teamIndex, points) {
+            teams[teamIndex].score += points;
+            document.getElementById(`scoreTeam${teamIndex}`).innerText = teams[teamIndex].score;
+            displayTeams(); // Update the displayed score
+        }
+
+        function updateManualScore(teamIndex, value) {
+            let newScore = parseInt(value, 10);
+            if (!isNaN(newScore)) {
+                teams[teamIndex].score = newScore;
+                document.getElementById(`scoreTeam${teamIndex}`).innerText = newScore;
+            }
         }
 
         loadBoard();
