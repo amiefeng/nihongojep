@@ -7,67 +7,163 @@
     <title>日本語ユニット６の漢字</title>
 </head>
 <body>
-    <div class="game-container">
-        <h1>日本語ユニット６の漢字</h1>
-
-        <div class="board-container">
-            <div class="board" id="board"></div>
+    <div class="container">
+        <div class="game-container">
+            <h1>日本語ユニット６の漢字</h1>
+    
+            <div class="board-container">
+                <div class="board" id="board"></div>
+            </div>
+    
+            <div class="modal" id="modal">
+                <p id="question"></p>
+            </div>
         </div>
-
-        <div class="modal" id="modal">
-            <p id="question"></p>
+    
+        <div class="scoreboard">
+            <h2>🏆 Teams</h2>
+            <div id="teamList"></div>
+    
+            <h3>Add New Team</h3>
+            <input type="text" id="teamNameInput" placeholder="Enter team name">
+            <button onclick="addTeam()">Add Team</button>
         </div>
     </div>
-
-    <div class="scoreboard">
-        <h3>Teams</h3>
-        <div id="teamList"></div>
-        <h4>Add New Team</h4>
-        <input type="text" id="teamNameInput" placeholder="Enter team name">
-        <button onclick="addTeam()">Add Team</button>
-    </div>
+    
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+        }
+    
+        .container {
+            display: grid;
+            grid-template-columns: 3fr 1fr; /* Game on left, Scoreboard on right */
+            height: 100%;
+            gap: 10px;
+        }
+    
+        /* Game Section */
+        .game-container {
+            padding: 20px;
+            background-color: white;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    
+        /* Scoreboard */
+        .scoreboard {
+            background: #fff;
+            padding: 20px;
+            border: 5px solid #86e3b0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            box-sizing: border-box;
+            width: 100%;
+        }
+    
+        .scoreboard h2 {
+            color: #86e3b0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    
+        #teamList {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 10px;
+            padding: 15px;
+            width: 100%;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            min-height: 120px;
+            box-sizing: border-box;
+        }
+    
+        h3 {
+            margin-top: 20px;
+            color: #333;
+        }
+    
+        input {
+            width: 90%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+    
+        button {
+            width: 90%;
+            padding: 12px;
+            margin-top: 10px;
+            background: #86e3b0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+    
+        button:hover {
+            background: #86e3b0;
+        }
+    </style>
 
     <script>
         const categories = ["意味", "読み方", "書く", "例えば", "BONUS"];
 
-// Dictionary with proper questions and answers
-        const questionsData = {
-            "意味": [
-                { question: "What is the meaning of 漢字?", answer: "Kanji" },
-                { question: "What is the meaning of 日本?", answer: "Japan" },
-                { question: "What is the meaning of 勉強?", answer: "Study" },
-                { question: "What is the meaning of 学校?", answer: "School" },
-                { question: "What is the meaning of 先生?", answer: "Teacher" }
-            ],
-            "読み方": [
-                { question: "How do you read 漢字?", answer: "かんじ (Kanji)" },
-                { question: "How do you read 日本?", answer: "にほん (Nihon)" },
-                { question: "How do you read 勉強?", answer: "べんきょう (Benkyou)" },
-                { question: "How do you read 学校?", answer: "がっこう (Gakkou)" },
-                { question: "How do you read 先生?", answer: "せんせい (Sensei)" }
-            ],
-            "書く": [
-                { question: "Write the kanji for 'Kanji'.", answer: "漢字" },
-                { question: "Write the kanji for 'Japan'.", answer: "日本" },
-                { question: "Write the kanji for 'Study'.", answer: "勉強" },
-                { question: "Write the kanji for 'School'.", answer: "学校" },
-                { question: "Write the kanji for 'Teacher'.", answer: "先生" }
-            ],
-            "例えば": [
-                { question: "Give an example of a word using 漢字.", answer: "中国語 (Chinese Language)" },
-                { question: "Give an example of a word using 日本.", answer: "日本人 (Japanese Person)" },
-                { question: "Give an example of a word using 勉強.", answer: "勉強時間 (Study Time)" },
-                { question: "Give an example of a word using 学校.", answer: "小学校 (Elementary School)" },
-                { question: "Give an example of a word using 先生.", answer: "英語の先生 (English Teacher)" }
-            ],
-            "BONUS": [
-                { question: "What is the Japanese word for 'Language'?", answer: "言語 (Gengo)" },
-                { question: "What is the Japanese word for 'University'?", answer: "大学 (Daigaku)" },
-                { question: "What is the Japanese word for 'Library'?", answer: "図書館 (Toshokan)" },
-                { question: "What is the Japanese word for 'Homework'?", answer: "宿題 (Shukudai)" },
-                { question: "What is the Japanese word for 'Friend'?", answer: "友達 (Tomodachi)" }
-            ]
-        };
+// Dictionary with proper questions and answers, with optional image URLs
+const questionsData = {
+    "意味": [
+        { question: "What is the meaning of 漢字?", answer: "Kanji", image: "" },
+        { question: "What is the meaning of 日本?", answer: "Japan", image: "" },
+        { question: "What is the meaning of 勉強?", answer: "Study", image: "" }, 
+        { question: "What is the meaning of 学校?", answer: "School", image: "" },
+        { question: "What is the meaning of 先生?", answer: "Teacher", image: "" }
+    ],
+    "読み方": [
+        { question: "How do you read 漢字?", answer: "かんじ (Kanji)", image: "" },
+        { question: "How do you read 日本?", answer: "にほん (Nihon)", image: "path/to/image4.jpg" },
+        { question: "How do you read 勉強?", answer: "べんきょう (Benkyou)", image: "" },
+        { question: "How do you read 学校?", answer: "がっこう (Gakkou)", image: "" },
+        { question: "How do you read 先生?", answer: "せんせい (Sensei)", image: "path/to/image5.jpg" }
+    ],
+    "書く": [
+        { question: "Write the kanji for 'Kanji'.", answer: "漢字", image: "path/to/image6.jpg" },
+        { question: "Write the kanji for 'Japan'.", answer: "日本", image: "" },
+        { question: "Write the kanji for 'Study'.", answer: "勉強", image: "path/to/image7.jpg" },
+        { question: "Write the kanji for 'School'.", answer: "学校", image: "" },
+        { question: "Write the kanji for 'Teacher'.", answer: "先生", image: "path/to/image8.jpg" }
+    ],
+    "例えば": [
+        { question: "Give an example of a word using 漢字.", answer: "中国語 (Chinese Language)", image: "" },
+        { question: "Give an example of a word using 日本.", answer: "日本人 (Japanese Person)", image: "" },
+        { question: "Give an example of a word using 勉強.", answer: "勉強時間 (Study Time)", image: "" },
+        { question: "Give an example of a word using 学校.", answer: "小学校 (Elementary School)", image: "" },
+        { question: "Give an example of a word using 先生.", answer: "英語の先生 (English Teacher)", image: "" }
+    ],
+    "BONUS": [
+        { question: "What is the Japanese word for 'Language'?", answer: "言語 (Gengo)", image: "images/climb.jpg" },
+        { question: "What is the Japanese word for 'University'?", answer: "大学 (Daigaku)", image: "" },
+        { question: "What is the Japanese word for 'Library'?", answer: "図書館 (Toshokan)", image: "" },
+        { question: "What is the Japanese word for 'Homework'?", answer: "宿題 (Shukudai)", image: "" },
+        { question: "What is the Japanese word for 'Friend'?", answer: "友達 (Tomodachi)", image: "" }
+    ]
+};
 
     // Generate questions array for the board
         const questions = [];
@@ -78,6 +174,7 @@
                     category: category,
                     question: questionsData[category][row].question,
                     answer: questionsData[category][row].answer,
+                    image: questionsData[category][row].image,
                     points: (row + 1) * 100
                 });
             });
@@ -90,21 +187,59 @@
         answerText.style.display = "none"; // Hide answer initially
         modal.appendChild(answerText);
 
-        const revealButton = document.createElement("button");
-        revealButton.innerText = "Reveal Answer";
-        revealButton.onclick = () => {
-            answerText.style.display = "block";
-        };
+        // Create the "Reveal Answer" and "Close" buttons once (outside of the openQuestion function)
+const revealButton = document.createElement("button");
+revealButton.innerText = "Reveal Answer";
+revealButton.onclick = () => {
+    answerText.style.display = "block"; // Show the answer
+    showTeamSelection(); // Show team selection when answer is revealed
+};
 
-        const closeButton = document.createElement("button");
-        closeButton.innerText = "Close";
-        closeButton.onclick = () => {
-            modal.style.display = "none";
-            answerText.style.display = "none"; // Hide answer for next question
-        };
+const closeButton = document.createElement("button");
+closeButton.innerText = "Close";
+closeButton.onclick = () => {
+    modal.style.display = "none";
+    answerText.style.display = "none"; // Hide answer for the next question
+};
 
-        modal.appendChild(revealButton);
-        modal.appendChild(closeButton);
+
+
+function openQuestion(index, cell) {
+    const currentQuestion = questions[index];
+    questionText.innerText = currentQuestion.question;
+    answerText.innerText = `Answer: ${currentQuestion.answer}`;
+    answerText.style.display = "none"; // Hide answer initially
+    modal.style.display = "block";
+    cell.classList.add("clicked");
+
+    // Clear any previously displayed image (in case a new question has an image)
+    const existingImage = modal.querySelector("img");
+    if (existingImage) {
+        existingImage.remove();
+    }
+
+    // Check if there is an image for this question
+    if (currentQuestion.image && currentQuestion.image !== "") {
+        const questionImage = document.createElement("img");
+        questionImage.src = currentQuestion.image; // Set the image source
+        questionImage.alt = "Question Image";
+        questionImage.style.maxWidth = "50%"; // Make the image responsive
+        questionImage.style.marginTop = "10px"; // Add some space between question and image
+        modal.appendChild(questionImage); // Append the image to the modal
+    }
+
+    // Store points for this question
+    awardPointsContainer.dataset.points = currentQuestion.points;
+    awardPointsContainer.style.display = "none"; // Hide the team selection initially
+
+    // Append the buttons to the modal
+modal.appendChild(revealButton);
+modal.appendChild(closeButton);
+}
+
+        const awardPointsContainer = document.createElement("div");
+        awardPointsContainer.style.display = "none"; // Initially hidden
+        modal.appendChild(awardPointsContainer);
 
         function loadBoard() {
             categories.forEach(category => {
@@ -123,14 +258,8 @@
             });
         }
 
-        function openQuestion(index, cell) {
-            const currentQuestion = questions[index];
-            questionText.innerText = currentQuestion.question;
-            answerText.innerText = `Answer: ${currentQuestion.answer}`;
-            answerText.style.display = "none"; // Hide answer initially
-            modal.style.display = "block";
-            cell.classList.add("clicked");
-        }
+       
+
         const teams = [];
 
         // Team management functions
@@ -144,20 +273,66 @@
             }
         }
 
+        function showTeamSelection() {
+    awardPointsContainer.innerHTML = "<h3>Award Points:</h3>";
+    awardPointsContainer.style.display = "block"; // Make it visible
+
+    teams.forEach((team, index) => {
+        let teamButton = document.createElement("button");
+        teamButton.textContent = team.name;
+        teamButton.style.display = "inline-block"; // Makes buttons line up horizontally
+        teamButton.style.width = "20%";
+        teamButton.style.margin = "5px"; // Small spacing for clarity
+        teamButton.style.padding = "5px 10px"; // Make buttons easier to click
+        teamButton.style.cursor = "pointer"; // Indicate it's clickable
+
+        teamButton.onclick = () => {
+            adjustScore(index, parseInt(awardPointsContainer.dataset.points));
+            awardPointsContainer.style.display = "none"; // Hide after selecting
+            modal.style.display = "none"; // Close modal
+        };
+
+        awardPointsContainer.appendChild(teamButton);
+    });
+}
+
         function displayTeams() {
             teamList.innerHTML = ""; // Clear the team list before redisplaying
             teams.forEach((team, index) => {
-                let teamDiv = document.createElement("div");
-                teamDiv.classList.add("team-item");
-                teamDiv.innerHTML = `${team.name} - Score: <span id="scoreTeam${index}">${team.score}</span>
-                                      <div class="score-controls">
-                                          <button onclick="adjustScore(${index}, 100)">+100</button>
-                                          <button onclick="adjustScore(${index}, -100)">-100</button>
-                                          <input type="number" class="score-input" value="${team.score}" onchange="updateManualScore(${index}, this.value)" />
-                                      </div>`;
-                teamList.appendChild(teamDiv);
-            });
-        }
+            let teamDiv = document.createElement("div");
+            teamDiv.classList.add("team-item"); // Add a class for styling later
+            
+            let teamName = document.createElement("h3");
+            teamName.textContent = team.name;
+
+            let teamScore = document.createElement("p");
+            teamScore.innerHTML = `Score: <span id="scoreTeam${index}">${team.score}</span>`;
+            
+            let scoreControls = document.createElement("div");
+            scoreControls.classList.add("score-controls");
+
+            let plusButton = document.createElement("button");
+            plusButton.textContent = "+100";
+            plusButton.onclick = function() {
+                adjustScore(index, 100);
+            };
+
+            let minusButton = document.createElement("button");
+            minusButton.textContent = "-100";
+            minusButton.onclick = function() {
+                adjustScore(index, -100);
+            };
+
+            // Append elements in order
+            scoreControls.appendChild(plusButton);
+            scoreControls.appendChild(minusButton);
+            teamDiv.appendChild(teamName);
+            teamDiv.appendChild(teamScore);
+            teamDiv.appendChild(scoreControls);
+
+            teamList.appendChild(teamDiv);
+        });
+}
 
         function adjustScore(teamIndex, points) {
             teams[teamIndex].score += points;
